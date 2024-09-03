@@ -60,4 +60,7 @@ class BasicAuth(Auth):
         user = users[0]
         if not user.is_valid_password(user_pwd):
             return None
+        user_test = User.get(user.id)
+        if not user.__eq__(user_test):
+            return None
         return user
