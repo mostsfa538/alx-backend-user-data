@@ -1,37 +1,29 @@
 #!/usr/bin/env python3
-""" Main 5
+""" Main 1
 """
-import uuid
-from api.v1.auth.basic_auth import BasicAuth
-from models.user import User
+from api.v1.auth.session_auth import SessionAuth
 
-""" Create a user test """
-user_email = str(uuid.uuid4())
-user_clear_pwd = str(uuid.uuid4())
-user = User()
-user.email = user_email
-user.first_name = "Bob"
-user.last_name = "Dylan"
-user.password = user_clear_pwd
-print("New user: {}".format(user.display_name()))
-user.save()
+sa = SessionAuth()
 
-""" Retreive this user via the class BasicAuth """
+print("{}: {}".format(type(sa.user_id_by_session_id), sa.user_id_by_session_id))
 
-a = BasicAuth()
+user_id = None
+session = sa.create_session(user_id)
+print("{} => {}: {}".format(user_id, session, sa.user_id_by_session_id))
 
-u = a.user_object_from_credentials(None, None)
-print(u.display_name() if u is not None else "None")
+user_id = 89
+session = sa.create_session(user_id)
+print("{} => {}: {}".format(user_id, session, sa.user_id_by_session_id))
 
-u = a.user_object_from_credentials(89, 98)
-print(u.display_name() if u is not None else "None")
+user_id = "abcde"
+session = sa.create_session(user_id)
+print("{} => {}: {}".format(user_id, session, sa.user_id_by_session_id))
 
-u = a.user_object_from_credentials("email@notfound.com", "pwd")
-print(u.display_name() if u is not None else "None")
+user_id = "fghij"
+session = sa.create_session(user_id)
+print("{} => {}: {}".format(user_id, session, sa.user_id_by_session_id))
 
-u = a.user_object_from_credentials(user_email, "pwd")
-print(u.display_name() if u is not None else "None")
-
-u = a.user_object_from_credentials(user_email, user_clear_pwd)
-print(u.display_name() if u is not None else "None")
+user_id = "abcde"
+session = sa.create_session(user_id)
+print("{} => {}: {}".format(user_id, session, sa.user_id_by_session_id))
 
