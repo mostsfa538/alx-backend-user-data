@@ -3,6 +3,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.session import Session
 from typing import Type
 
@@ -31,9 +32,14 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, eamil: str, hashed_password: str) -> User:
-        """save the user to the database """
-        new_user = User(email=eamil, hashed_password=hashed_password)
-        self._session.add(new_user)
-        self._session.commit()
+    def add_user(self, email: str, hashed_password: str) -> User:
+        """Save the user to the database and return the User object"""
+        new_user = User(email=email, hashed_password=hashed_password)
+        try:
+            self._session.add(new_user)
+            self._session.commit()
+        except SQLAlchemyError as e:
+            self._session.rollback()
+            print(f"An error occurred: {e}")
+            raise
         return new_user
