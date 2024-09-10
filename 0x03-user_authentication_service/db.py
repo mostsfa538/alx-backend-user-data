@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.session import Session
 from user import Base, User
 
@@ -37,12 +38,17 @@ class DB:
         self._session.commit()
         return new_user
 
-    def find_user_by(self, **kwargs):
-        """ returns the first row found in the users table """
-        user = self._session.query(User).filter_by(**kwargs).first()
+    def find_user_by(self, **kwargs) -> User:
+        """Returns the first row found in the users table filtered by kwargs"""
+        model_columns = {c.name for c in inspect(User).columns}
+
         for k in kwargs.keys():
-            if k not in User.__dict__:
-                raise InvalidRequestError
+            if k not in model_columns:
+                raise InvalidRequestError()
+
+        user = self._session.query(User).filter_by(**kwargs).first()
+
         if not user:
-            raise NoResultFound
+            raise NoResultFound()
+
         return user
