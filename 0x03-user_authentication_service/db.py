@@ -52,3 +52,19 @@ class DB:
             raise NoResultFound()
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ update the user’s attributes """
+        try:
+            user = self.find_user_by(id=user_id)
+            valid_columns = {c.name for c in inspect(User).columns}
+            for k, v in kwargs.items():
+                if k not in valid_columns:
+                    raise InvalidRequestError(f"Invalid column name: {k}")
+                setattr(user, k, v)
+
+            self._session.commit()
+        except NoResultFound:
+            raise ValueError()
+        except InvalidRequestError:
+            raise ValueError()
