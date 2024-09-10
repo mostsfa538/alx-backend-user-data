@@ -37,10 +37,10 @@ class DB:
         self._session.commit()
         return new_user
 
-    def find_user_by(self, **kargs):
+    def find_user_by(self, **kwargs):
         """ returns the first row found in the users table """
-        user = self._session.query(User).filter_by(**kargs).first()
-        for k in kargs.keys():
+        user = self._session.query(User).filter_by(**kwargs).first()
+        for k in kwargs.keys():
             if k not in User.__dict__:
                 raise InvalidRequestError
         if not user:
