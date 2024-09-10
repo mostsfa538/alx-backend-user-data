@@ -44,11 +44,11 @@ class DB:
 
         for k in kwargs.keys():
             if k not in model_columns:
-                raise InvalidRequestError(f"Invalid column name: {k}")
+                raise InvalidRequestError()
 
         user = self._session.query(User).filter_by(**kwargs).first()
 
         if not user:
-            raise NoResultFound("No user found matching the criteria")
+            raise NoResultFound()
 
         return user
