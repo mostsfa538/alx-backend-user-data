@@ -3,6 +3,8 @@
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from user import Base, User
@@ -34,3 +36,13 @@ class DB:
         self._session.add(new_user)
         self._session.commit()
         return new_user
+
+    def find_user_by(self, **kargs):
+        """ returns the first row found in the users table """
+        user = self._session.query(User).filter_by(**kargs).first()
+        for k in kargs.keys():
+            if k not in User.__dict__:
+                raise InvalidRequestError
+        if not user:
+            raise NoResultFound
+        return user
