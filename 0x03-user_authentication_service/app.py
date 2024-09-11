@@ -46,7 +46,7 @@ def login():
 @app.route('/sessions', methods=['DELETE'])
 def logout():
     """ Log out """
-    session_id = request.form.get('session_id')
+    session_id = request.cookies.get('session_id')
     try:
         user = AUTH.get_user_from_session_id(session_id)
         if user is None:
